@@ -1,4 +1,4 @@
-FROM php:7.3-apache as php7_apache_base
+FROM php:8.3-apache AS php_apache_base
 
 # install packages
 RUN apt update && apt install -yq --no-install-recommends \
@@ -30,21 +30,19 @@ RUN pecl install apcu && \
     pecl install memcached
 
 # install and configure extensions
-RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql zip xsl
-RUN docker-php-ext-configure intl && \
-    docker-php-ext-install -j$(nproc) intl
-RUN docker-php-ext-configure gd \
-    --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/ \
-    --with-freetype-dir=/usr/include/ --with-gd && \
-    docker-php-ext-install -j$(nproc) gd
-RUN docker-php-ext-enable memcached apcu
+RUN docker-php-ext-install -j$(nproc) opcache pdo_mysql zip xsl && \
+    docker-php-ext-configure intl && \
+    docker-php-ext-install -j$(nproc) intl && \
+    docker-php-ext-configure gd && \
+    docker-php-ext-install -j$(nproc) gd && \
+    docker-php-ext-enable memcached apcu
 
 WORKDIR /var/www
 
-FROM php7_apache_base as php7_apache_chamilo_lms
+FROM php_apache_base AS php_apache_chamilo_lms
 
-ARG CHAMILO_VERSION="1.11.12"
-ARG CHAMILO_TAR="chamilo-${CHAMILO_VERSION}-php7.2.tar.gz"
+ARG CHAMILO_VERSION="1.11.32"
+ARG CHAMILO_TAR="chamilo-${CHAMILO_VERSION}.tar.gz"
 
 # download and install chamilo
 ADD "https://github.com/chamilo/chamilo-lms/releases/download/v${CHAMILO_VERSION}/${CHAMILO_TAR}" "/var/www/chamilo.tar.gz"
@@ -58,7 +56,7 @@ RUN find . -iname ".git*" -exec rm -rf {} + \
 
 WORKDIR /var/www/chamilo
 
-RUN bash -c 'set -o pipefail; ls -d app main/default_course_document/images main/lang vendor web | parallel chown -R www-data:www-data "{}"'
+RUN chown -R www-data:www-data app main/default_course_document/images main/lang vendor web
 
 # Configure and start Apache
 RUN a2dissite 000-default; rm -rf /etc/apache2/sites-enabled/000-default.conf
@@ -67,6 +65,6 @@ COPY files/chamilo.conf /etc/apache2/sites-available/chamilo.conf
 RUN a2ensite chamilo; a2enmod remoteip rewrite headers
 
 # configure /etc/hosts
-RUN echo "127.0.0.1 docker.chamilo.net" >> /etc/hosts
+#RUN echo "127.0.0.1 docker.chamilo.net" >> /etc/hosts
 
 EXPOSE 80

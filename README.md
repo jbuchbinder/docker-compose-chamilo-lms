@@ -3,7 +3,7 @@
 A simple docker-compose setup for [Chamilo](https://chamilo.org/) LMS.
 
 Official Docker Hub images used:
-* [php](https://hub.docker.com/_/php/) (7.x-apache)
+* [php](https://hub.docker.com/_/php/) (8.3-apache)
 * [mariadb](https://hub.docker.com/_/mariadb/) (latest)
 
 Chamilo LMS on Github: https://github.com/chamilo/chamilo-lms
@@ -48,8 +48,8 @@ Check for `.tar.gz` filenames here: https://github.com/chamilo/chamilo-lms/relea
 Example in `docker-compose.yml`:
 ```yaml
       args:
-        - CHAMILO_VERSION=1.11.10
-        - CHAMILO_TAR=chamilo-1.11.10-php7.3.tar.gz
+        - CHAMILO_VERSION=1.11.32
+        - CHAMILO_TAR=chamilo-1.11.32.tar.gz
 ```
 
 The `args` settings in `docker-compose.yml` will override the `ARG` settings in the `Dockerfile`.

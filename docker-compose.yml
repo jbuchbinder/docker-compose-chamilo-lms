@@ -9,14 +9,14 @@ services:
       - MYSQL_DATABASE=chamilo
     labels:
       "project.id": "docker.compose.mariadb"
-      "project.github.url": "https://github.com/22phuber/docker-compose-chamilo-lms"
-  chamilo_php7:
+      "project.github.url": "https://github.com/jbuchbinder/docker-compose-chamilo-lms"
+  chamilo:
     build:
-      context: ./chamilo-php7
-      target: php7_apache_chamilo_lms
+      context: ./chamilo
+      target: php_apache_chamilo_lms
       args:
-        - CHAMILO_VERSION=1.11.12
-        - CHAMILO_TAR=chamilo-1.11.12-php7.2.tar.gz
+        - CHAMILO_VERSION=1.11.32
+        - CHAMILO_TAR=chamilo-1.11.32.tar.gz
     links:
       - mariadb
     ports:
@@ -25,4 +25,4 @@ services:
       - "docker.chamilo.net:127.0.0.1"
     labels:
       "project.id": "docker.compose.chamilo_lms"
-      "project.github.url": "https://github.com/22phuber/docker-compose-chamilo-lms"
+      "project.github.url": "https://github.com/jbuchbinder/docker-compose-chamilo-lms"
